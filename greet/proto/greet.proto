@@ -6,7 +6,8 @@ option go_package = "github.com/MegalLink/grpc-go-1.18/greet/proto";
 
 
 message GreetRequest{
-    string first_name =1;
+    string first_name = 1;
+    string languaje = 2;
 } 
 
 message GreetResponse{
@@ -15,4 +16,5 @@ message GreetResponse{
 
 service GreetService{
     rpc Greet (GreetRequest) returns (GreetResponse);
+    rpc GreetManyTimes (GreetRequest) returns (stream GreetResponse);
 }
