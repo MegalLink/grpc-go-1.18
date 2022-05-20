@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	constants "github.com/MegalLink/grpc-go-1.18/greet"
@@ -35,4 +36,22 @@ func (s *Server) GreetManyTimes(request *pb.GreetRequest, stream pb.GreetService
 	}
 
 	return nil
+}
+
+func (s *Server) LongGreet(stream pb.GreetService_LongGreetServer) error {
+	log.Printf("LongGreet function was invoked with \n")
+
+	res := ""
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			return stream.SendAndClose(&pb.GreetResponse{Result: fmt.Sprint("Greetings:" + res)})
+		}
+		if err != nil {
+			log.Fatalf("stream reading error: %v\n", err)
+		}
+		greeting := LanguajeGreet[req.Languaje]
+
+		res += fmt.Sprintf("greeting: %s ", greeting)
+	}
 }
