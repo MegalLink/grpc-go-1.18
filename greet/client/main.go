@@ -23,4 +23,8 @@ func main() {
 	doGreet(c)
 	doGreetManyTimes(c)
 	doLongGreet(c)
+	println("DO GREET EVERYONE ALL")
+	doGreatGreetEveryOne(c, true)
+	println("DO GREET EVERYONE CHANNEL")
+	doGreatGreetEveryOne(c, false)
 }

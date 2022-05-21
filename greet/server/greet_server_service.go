@@ -55,3 +55,21 @@ func (s *Server) LongGreet(stream pb.GreetService_LongGreetServer) error {
 		res += fmt.Sprintf("greeting: %s ", greeting)
 	}
 }
+
+func (s *Server) GreetEveryOne(stream pb.GreetService_GreetEveryOneServer) error {
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("stream reading error: %v\n", err)
+		}
+		greeting := LanguajeGreet[req.Languaje]
+
+		if err := stream.Send(&pb.GreetResponse{Result: fmt.Sprintf("%s->%s", req.FirstName, greeting)}); err != nil {
+			log.Fatalf("stream sending error: %v\n", err)
+		}
+	}
+	return nil
+}
