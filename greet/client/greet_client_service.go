@@ -8,6 +8,8 @@ import (
 
 	constants "github.com/MegalLink/grpc-go-1.18/greet"
 	pb "github.com/MegalLink/grpc-go-1.18/greet/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func doGreet(c pb.GreetServiceClient) {
@@ -15,10 +17,21 @@ func doGreet(c pb.GreetServiceClient) {
 
 	res, err := c.Greet(context.Background(), &pb.GreetRequest{
 		FirstName: "Jeferson",
-		Languaje:  constants.RU,
+		Languaje:  "HI",
 	})
 	if err != nil {
-		log.Fatalf("Could not greet: %v\n", err)
+		e, ok := status.FromError(err)
+		if ok {
+			log.Printf("Error message from server %s\n", e.Message())
+			log.Printf("Error code from server %s\n", e.Code())
+			if e.Code() == codes.InvalidArgument {
+				log.Println("Languaje not found")
+				return
+			}
+
+		} else {
+			log.Fatalf("A non not gRPC error: %v\n", err)
+		}
 	}
 
 	log.Printf("Greeting %s\n", res.Result)

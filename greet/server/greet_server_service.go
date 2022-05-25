@@ -8,6 +8,8 @@ import (
 
 	constants "github.com/MegalLink/grpc-go-1.18/greet"
 	pb "github.com/MegalLink/grpc-go-1.18/greet/proto"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var LanguajeGreet = map[string]string{
@@ -23,6 +25,12 @@ var LanguajeGreet = map[string]string{
 func (s *Server) Greet(ctx context.Context, request *pb.GreetRequest) (*pb.GreetResponse, error) {
 	log.Printf("Greet function was invoked with %v\n", request)
 	greetResponse := LanguajeGreet[request.Languaje]
+	if greetResponse == "" {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			fmt.Sprintf("Received a languaje that dont match %s", request.Languaje),
+		)
+	}
 
 	return &pb.GreetResponse{Result: fmt.Sprintf("%s %s", greetResponse, request.FirstName)}, nil
 }
